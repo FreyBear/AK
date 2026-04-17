@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AK26 Tidsplan - Stavanger Studentsangforening</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a4d8f;
+            --secondary: #d4af37;
+            --accent: #c41e3a;
+            --bg: #ffffff;
+            --card-bg: #f8f9fa;
+            --text: #212529;
+            --text-muted: #6c757d;
+            --border: #dee2e6;
+            --current-event: #fff3cd;
+            --next-event: #d1ecf1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            padding-bottom: 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2563a8 100%);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .countdown {
+            background: var(--accent);
+            color: white;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .countdown.started {
+            background: #28a745;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .alert {
+            background: var(--secondary);
+            color: #212529;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .contacts {
+            background: var(--card-bg);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .contacts strong {
+            color: var(--primary);
+        }
+
+        .day-section {
+            margin: 2rem 0;
+        }
+
+        .day-header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .day-header.current-day {
+            background: var(--accent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        .event {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-top: none;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .event:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .event.current-event {
+            background: var(--current-event);
+            border-left: 4px solid var(--accent);
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(196, 30, 58, 0.2);
+        }
+
+        .event.next-event {
+            background: var(--next-event);
+            border-left: 4px solid var(--primary);
+        }
+
+        .event-time {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .event.current-event .event-time {
+            color: var(--accent);
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-location {
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+        }
+
+        .event-location::before {
+            content: "📍";
+            flex-shrink: 0;
+        }
+
+        .event-location a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .event-location a:hover {
+            text-decoration: underline;
+        }
+
+        .event-notes {
+            background: rgba(26, 77, 143, 0.05);
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            white-space: pre-line;
+        }
+
+        .info-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .info-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .info-section h3 {
+            color: var(--primary);
+            margin: 1.5rem 0 0.75rem 0;
+            font-size: 1.2rem;
+        }
+
+        .info-section p, .info-section ul {
+            margin-bottom: 1rem;
+        }
+
+        .info-section ul {
+            padding-left: 1.5rem;
+        }
+
+        .info-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .info-section a {
+            color: var(--primary);
+            word-break: break-all;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+
+        .badge.now {
+            background: #28a745;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .badge.next {
+            background: var(--primary);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .day-header {
+                font-size: 1.25rem;
+            }
+            
+            .event-time {
+                font-size: 1.1rem;
+            }
+            
+            .event-title {
+                font-size: 1rem;
+            }
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .scroll-indicator:hover {
+            transform: scale(1.1);
+            background: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .scroll-indicator {
+                width: 45px;
+                height: 45px;
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎵 AK26 Tidsplan</h1>
+        <div class="subtitle">Stavanger Studentsangforening</div>
+    </div>
+
+    <div id="countdown" class="countdown"></div>
+
+    <div class="container">
+        <div class="alert">
+            Vi synges i fire hele dager!<br>
+            <strong>AK-komitéen:</strong> Christian B, Ingrid Irene, Mathilde og John
+        </div>
+
+        <div class="contacts">
+            <strong>📞 Reiseleder:</strong> Kolstad - 90 16 25 40<br>
+            <small>Ring ved spørsmål om steder, anbefalinger for mat, hva man må ha på seg eller hvem man skal snakke med for å løse et problem</small>
+        </div>
+
+        <!-- Torsdag 16. April -->
+        <div class="day-section" id="day-2026-04-16">
+            <div class="day-header">Torsdag 16. April 2026</div>
+            
+            <div class="event" data-datetime="2026-04-16T19:00">
+                <div class="event-time">⏰ 19:00</div>
+                <div class="event-title">Åpningskonsert med TSS og TKS</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Erkebispegården+Kongsgårdsgata+7013+Trondheim+Norway" target="_blank">Øysteinsalen i Erkebispegården, Kongsgårdsgata 7013</a></span>
+                </div>
+                <div class="event-notes">📝 NB: Helst ferdig skiftet til sangerpub. Kjole og hvitt eller fest/pent.
+
+Bling: Foreningens merke, årsnål, stormfokk, hippocampus, perle, sushi-pin. (fotboka s. 15)</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-16T20:00">
+                <div class="event-time">⏰ 20:00</div>
+                <div class="event-title">Sangerpub på Studentersamfundet</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Studentersamfundet+Elgeseter+Gate+1+Trondheim+Norway" target="_blank">Studentersamfundet, Elgeseter Gate 1</a></span>
+                </div>
+                <div class="event-notes">📝 NB: Vi mingler og synger med alle de kommende vennene våre.
+
+I SSS er vi gode på å spre oss! Sangerpuben er til for å bli venner med så mange som mulig! Står mange SSSere sammen? Finn noen som mangler Stavangervarmen.
+
+⚠️ Ikke drikk for mye. Vi har øving og konsert på fredag som vi ønsker at skal gå bra.</div>
+            </div>
+        </div>
+
+        <!-- Fredag 17. April -->
+        <div class="day-section" id="day-2026-04-17">
+            <div class="day-header">Fredag 17. April 2026</div>
+            
+            <div class="event" data-datetime="2026-04-17T09:00">
+                <div class="event-time">⏰ 09:00-12:00</div>
+                <div class="event-title">Felles øvelse - Fellesrepertoar for gallakonsert</div>
+                <div class="event-location">
+                    <span><a href="https://link.mazemap.com/HxKWt1FH" target="_blank">EL5 ved Campus Gløshaugen, O S Bragstads Plass 2E</a></span>
+                </div>
+                <div class="event-notes">📝 Øveplan:
+09:00-09:50 - Oppvarming og Ve no velkomne
+09:50-10:10 - Sangerhilsen
+10:10-10:30 - Nu klinger
+10:30-10:50 - Pause
+
+Resten av øvelsen er delt:
+Menn: 10:50 Olav T, 11:10 Vuggesang, 11:30 Naar fjordene blaaner
+Kvinner: 10:50 Det lysnet, 11:10 Ubi Caritas, 11:30 Det er meg det samme
+
+⚠️ Spis god frokost før ØVELSE! Det serveres snacks under øvelse.</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T12:00">
+                <div class="event-time">⏰ 12:00-14:00</div>
+                <div class="event-title">Lunsj</div>
+                <div class="event-location">
+                    <span>Hvor enn du vil!</span>
+                </div>
+                <div class="event-notes">📝 Gyllen mulighet for å skifte til det du skal gå med etter konsert.
+
+Før SSS-øvelse bør du ha med deg:
+• Konsertantrekk (pakket ned)
+• Festantrekk
+• Håndbok</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T14:00">
+                <div class="event-time">⏰ 14:00-15:30</div>
+                <div class="event-title">Øvelse SSS - Eget repertoar</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Campus+Gløshaugen+Trondheim+Norway" target="_blank">Campus Gløshaugen</a> (Ukjent lokale, nærmere info kommer)</span>
+                </div>
+                <div class="event-notes">📝 Vi øver på eget repertoar for minikonserten vår.</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T16:00">
+                <div class="event-time">⏰ 16:00</div>
+                <div class="event-title">Sceneprøve i konsertsalen</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Erkebispegården+Kongsgårdsgata+7013+Trondheim+Norway" target="_blank">Øysteinsalen i Erkebispegården, Kongsgårdsgata 7013</a></span>
+                </div>
+                <div class="event-notes">📝 Etter en kort sceneprøve har vi BITTELITT tid til å skifte til konsertantrekk.</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T16:30">
+                <div class="event-time">⏰ 16:30</div>
+                <div class="event-title">Kvinnelige Studenters Sangforening (KSS) synger</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Erkebispegården+Kongsgårdsgata+7013+Trondheim+Norway" target="_blank">Øysteinsalen i Erkebispegården</a></span>
+                </div>
+                <div class="event-notes">📝 De er fra Oslo! Følg godt med på det de synger! Da har du noe å prate med KSSerne om etterpå 🙂</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T17:00">
+                <div class="event-time">⏰ 17:00</div>
+                <div class="event-title">Studentersangforeningen i Bergen synger</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Erkebispegården+Kongsgårdsgata+7013+Trondheim+Norway" target="_blank">Øysteinsalen i Erkebispegården</a></span>
+                </div>
+                <div class="event-notes">📝 De er fra Bergen! Følg godt med på det de synger! Da har du noe å prate med SiBerne om etterpå 🙂</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T17:30">
+                <div class="event-time">⏰ 17:30</div>
+                <div class="event-title">Stavanger Studentsangforening synger</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Erkebispegården+Kongsgårdsgata+7013+Trondheim+Norway" target="_blank">Øysteinsalen i Erkebispegården</a></span>
+                </div>
+                <div class="event-notes">📝 Vi er fra Stavanger! 
+
+Etter vår konsert har du BITTELITT tid til å skifte til festantrekk for kvelden.
+
+Bling: Foreningens merke og årsnål. (fotboka s. 15)</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T18:00">
+                <div class="event-time">⏰ 18:00-19:30</div>
+                <div class="event-title">Felles middag med Det Norske Mannskoret av 1995</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Krambua+Krambugata+12+Trondheim+Norway" target="_blank">Krambua, Krambugata 12</a></span>
+                </div>
+                <div class="event-notes">📝 Dersom du ikke er meldt på er du ikke garantert sitteplass eller mat, men du må gjerne gjøre et forsøk 🙂
+
+De som ikke er påmeldt kan be korister fra andre kor med på middag, eller organisere noe annet.
+
+Vi vandrer sammen med DNM95 til sangerpuben.</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-17T20:00">
+                <div class="event-time">⏰ 20:00</div>
+                <div class="event-title">Sangerpub på båt</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=The+King+of+Seven+Seas+Ladehammerkaia+1+Trondheim+Norway" target="_blank">The King of Seven Seas, Ladehammerkaia 1</a></span>
+                </div>
+                <div class="event-notes">📝 Bling: Foreningens merke, årsnål, stormfokk, hippocampus, perle, sushi-pin. (fotboka s. 15)
+
+I SSS er vi gode på å spre oss! Sangerpuben er til for å bli venner med så mange som mulig! Står mange SSSere sammen? Finn noen som mangler Stavangervarmen.
+
+⚠️ Ikke drikk for mye. Vi har øving og konsert på lørdag som vi ønsker å gjøre det godt på.
+
+Åsta har tilgang på kniv.</div>
+            </div>
+        </div>
+
+        <!-- Lørdag 18. April -->
+        <div class="day-section" id="day-2026-04-18">
+            <div class="day-header">Lørdag 18. April 2026</div>
+            
+            <div class="event" data-datetime="2026-04-18T10:00">
+                <div class="event-time">⏰ 10:00-13:00</div>
+                <div class="event-title">Felles øvelse - Fellesrepertoar for gallakonsert</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=EL5+Campus+Gløshaugen+Høgskoleringen+1+Trondheim+Norway" target="_blank">EL5 ved Campus Gløshaugen, Høgskoleringen 1</a></span>
+                </div>
+                <div class="event-notes">📝 Øveplan:
+10:00-10:30 - Oppvarming
+10:30-11:30 - Åsta styrer showet
+11:30-12:00 - Pause
+12:00-13:00 - Gjennomsynging i konsertrekkefølge
+
+⚠️ Spis god frokost før øvelse!</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-18T13:00">
+                <div class="event-time">⏰ 13:00-14:30</div>
+                <div class="event-title">Frokost/lunsj og forberedelser</div>
+                <div class="event-location">
+                    <span>Hvor enn du vil! Sminkevors hos Mathilde på vandrerhjemmet (<a href="https://www.google.com/maps/search/?api=1&query=Weidemanns+Vei+41B+Trondheim+Norway" target="_blank">Weidemanns Vei 41B</a>)</span>
+                </div>
+                <div class="event-notes">📝 Vi får litt fritid for å skifte og gjøre oss klare for gallakonsert og påfølgende middag.
+
+Arranger gjerne sminkevors!</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-18T15:00">
+                <div class="event-time">⏰ 15:00-17:30</div>
+                <div class="event-title">Gallakonsert</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x466d319bb3235e11:0x2b9eb19b654ab8a?sa=X&ved=1t:8290&ictx=111" target="_blank">Vår Frue Kirke, Kongens gate 5</a></span>
+                </div>
+                <div class="event-notes">📝 Program:
+• Ve no velkomne - Marius
+• Sangerhilsen - Marit
+• Olav Trygvasson - Alejandro
+• Det er meg det samme - Alejandro
+• Det lysnet - Regine
+• Naar fjordene blaaner - Ole-Andreas
+• Even when He is silent - Åsta
+• Vuggesang - Ole-Andreas
+• Ubi caritas - Regine
+• Nu klinger - Daniel
+• Ack Ack - Åsta
+
+Konserten begynner klokken 16:00, men vi møter opp 15:00 for å gjøre oss klare. Kirken har begrenset med backstage, så vi skal stå på scenen under hele konserten.
+
+Her stiller vi i gallantrekk!
+Bling: Foreningens merke, årsnål</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-18T17:30">
+                <div class="event-time">⏰ 17:30</div>
+                <div class="event-title">Felles transport til gallamiddagen</div>
+                <div class="event-location">
+                    <span>Fra Vår Frue Kirke</span>
+                </div>
+                <div class="event-notes">📝 Middagen starter ikke før alle er til stede, og vi følger bordsetting som er der. Jo fortere du er der, jo raskere kan du ta deg en øl.
+
+Ta gjerne med lerke til jakkelommen. Dersom lerken ikke er med, kan man alltid sjekke innom med vennene man fikk tidligere på festivalen.</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-18T18:00">
+                <div class="event-time">⏰ 18:00</div>
+                <div class="event-title">Gallamiddag</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x466d31bb03c090e3:0x7c09fe36cfdf83ef?sa=X&ved=1t:8290&ictx=111" target="_blank">Kvilhaugen Gård, Blusuvollsbakken 20</a></span>
+                </div>
+                <div class="event-notes">📝 ⚠️ Dersom du har med deg lommelerke, skal denne ikke brukes under gallamiddag. Dette av respekt for skjenkeløyvet for alkohol som Kvilhaugen gård må følge.
+
+Bling: Foreningens merke, årsnål, orden og fest-relaterte medaljer, UiS-nål, medlemsnåler fra andre akademiske kor og nåler for deltakelse på arrangement (jubileum, AK, NSSS). (fotboka s. 15)</div>
+            </div>
+
+            <div class="event" data-datetime="2026-04-19T01:30">
+                <div class="event-time">⏰ 01:30</div>
+                <div class="event-title">Nasch</div>
+                <div class="event-location">
+                    <span>Hemmelig lokasjon</span>
+                </div>
+                <div class="event-notes">📝 Det blir felles transport via buss til nasch-lokalet.
+
+Syng, drikk og vær glad!</div>
+            </div>
+        </div>
+
+        <!-- Søndag 19. April -->
+        <div class="day-section" id="day-2026-04-19">
+            <div class="day-header">Søndag 19. April 2026</div>
+            
+            <div class="event" data-datetime="2026-04-19T10:00">
+                <div class="event-time">⏰ 10:00</div>
+                <div class="event-title">Psildefrokost</div>
+                <div class="event-location">
+                    <span><a href="https://www.google.com/maps/search/?api=1&query=Studentersamfundet+Elgeseter+Gate+1+Trondheim+Norway" target="_blank">Studentersamfundet, Elgeseter Gate 1</a></span>
+                </div>
+                <div class="event-notes">📝 Du trenger ikke å sove før psildefrokost.
+
+Vi synger nok Psildesangen før eller under spising. Husk å være i skikkelig dårlig form!</div>
+            </div>
+        </div>
+
+        <!-- Nyttig informasjon -->
+        <div class="info-section">
+            <h2>📋 Nyttig informasjon</h2>
+            
+            <h3>🚌 Kollektivtransport i Trondheim</h3>
+            <p>Trondheim har, som Stavanger, en "bussvei", kalt superbussen eller metrobussen. Dette baserer seg på hovedruter med høy kapasitet og hyppige avganger, men da med lengre avstander mellom holdeplassene (eller "stasjoner" som de liker å kalle dem).</p>
+            
+            <p>Alle ruter kjører i stor grad innom Midtbyen, og mange (inkludert superbussrute 3) også innom Campus Gløshaugen (se etter Harry Potter-bygningen).</p>
+            
+            <p><strong>Billetter:</strong> Busselskapet ATB kjører alle ruter. Bestill billetter i EnTur-appen eller direkte i ATB sin mobillett-løsning. Enkeltbilletter koster 47 kroner, så det lønner seg å kjøpe periodebillett for enten 24 timer eller 7 dager. Merk at nattbusser ikke er inkludert i standardbillett.</p>
+            
+            <p><strong>Bysykkel:</strong> Man kan også kjøpe 3-dagers bysykkelabonnement for 119 kr. Last ned appen på <a href="https://trondheimbysykkel.no/" target="_blank">trondheimbysykkel.no</a>. Bysykkel er også inkludert i periodebillett hos AtB. ⚠️ Obs! Ikke sykle i beruset tilstand.</p>
+            
+            <p><strong>Holdeplass "Høyskoleringen"</strong> er nærmest Gamle Elektro, der fellesøvinger foregår. Det er også mulig å busse til Studentersamfundet og gå opp bakken dersom det passer bedre.</p>
+            
+            <p><strong>Avstander:</strong> Campus Gløshaugen er innenfor gangavstand fra Midtbyen der andre ting foregår, men det kan bli et stykke likevel dersom været viser seg fra sin verste side.</p>
+            
+            <p><strong>Alle steder samlet:</strong> <a href="https://maps.app.goo.gl/cB8cQkDSEeRRmA1u5?g_st=ac" target="_blank">Se kart med alle lokasjoner</a></p>
+
+            <h3>🎒 Pakkeliste</h3>
+            <ul>
+                <li>Lerke (minner om skjenkeløyvet, bruk på eget ansvar)</li>
+                <li>Lader og powerbank</li>
+                <li>Konsertantrekk</li>
+                <li>Gallaantrekk</li>
+                <li>Festantrekk</li>
+                <li>Studentlue</li>
+            </ul>
+
+            <h3>📌 Nåler & Daljer</h3>
+            <ul>
+                <li>Foreningens merke</li>
+                <li>UiS nål</li>
+                <li>Årsnål</li>
+                <li>Stormfokk</li>
+                <li>Hippocampus</li>
+                <li>Perle</li>
+                <li>Sushi-pin</li>
+                <li>Orden og fest-relaterte medaljer</li>
+                <li>Nåler for deltakelse på arrangement</li>
+                <li>Medlemsnåler fra andre akademiske kor</li>
+            </ul>
+
+            <h3>📚 Annet å ha med</h3>
+            <ul>
+                <li>Noter (damekor & mannskor spesielt)</li>
+                <li>Håndboka</li>
+                <li>Skrivesaker (skriv i miljøsiden)</li>
+                <li>Solbriller</li>
+                <li>Ull / jakke (det er vindfullt)</li>
+                <li>Badetøy til morgenbading</li>
+                <li>Toalettsaker (kjerringråd hvis man er bakfull: allergimedisin)</li>
+            </ul>
+
+            <h3>🏠 Romnummer vandrehjem</h3>
+            <p><a href="https://www.google.com/maps/search/?api=1&query=Weidemanns+Vei+41B+Trondheim+Norway" target="_blank">Weidemanns Vei 41B</a></p>
+        </div>
+    </div>
+
+    <div class="scroll-indicator" id="scrollToNext" title="Gå til neste hendelse">↓</div>
+
+    <script>
+        // Parse all events
+        const events = [];
+        document.querySelectorAll('.event[data-datetime]').forEach(el => {
+            const datetime = el.getAttribute('data-datetime');
+            if (datetime) {
+                events.push({
+                    element: el,
+                    datetime: new Date(datetime),
+                    timestamp: new Date(datetime).getTime()
+                });
+            }
+        });
+
+        // Sort events by time
+        events.sort((a, b) => a.timestamp - b.timestamp);
+
+        function updateCurrentEvent() {
+            const now = new Date();
+            const nowTimestamp = now.getTime();
+            
+            let currentEvent = null;
+            let nextEvent = null;
+            
+            // Remove all current/next badges
+            document.querySelectorAll('.badge').forEach(b => b.remove());
+            document.querySelectorAll('.event').forEach(e => {
+                e.classList.remove('current-event', 'next-event');
+            });
+            document.querySelectorAll('.day-header').forEach(d => {
+                d.classList.remove('current-day');
+            });
+
+            // Find current and next event
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                
+                // Check if event is happening now (within 3 hours window)
+                const eventEnd = event.timestamp + (3 * 60 * 60 * 1000);
+                
+                if (nowTimestamp >= event.timestamp && nowTimestamp < eventEnd) {
+                    currentEvent = event;
+                    nextEvent = events[i + 1] || null;
+                    break;
+                } else if (event.timestamp > nowTimestamp) {
+                    nextEvent = event;
+                    break;
+                }
+            }
+
+            // Highlight current event
+            if (currentEvent) {
+                currentEvent.element.classList.add('current-event');
+                const badge = document.createElement('span');
+                badge.className = 'badge now';
+                badge.textContent = 'Pågår nå';
+                currentEvent.element.querySelector('.event-title').appendChild(badge);
+                
+                // Highlight current day
+                const daySection = currentEvent.element.closest('.day-section');
+                if (daySection) {
+                    daySection.querySelector('.day-header').classList.add('current-day');
+                }
+            }
+
+            // Highlight next event
+            if (nextEvent) {
+                nextEvent.element.classList.add('next-event');
+                const badge = document.createElement('span');
+                badge.className = 'badge next';
+                badge.textContent = 'Neste';
+                nextEvent.element.querySelector('.event-title').appendChild(badge);
+            }
+
+            // Update countdown
+            updateCountdown(nextEvent || events[0]);
+
+            return nextEvent || currentEvent || events[0];
+        }
+
+        function updateCountdown(event) {
+            const countdownEl = document.getElementById('countdown');
+            if (!event) {
+                countdownEl.textContent = 'AK26 er over! 🎉';
+                return;
+            }
+
+            const now = new Date();
+            const diff = event.timestamp - now.getTime();
+
+            if (diff < 0) {
+                // Event has started
+                countdownEl.classList.add('started');
+                countdownEl.textContent = '🎵 Pågår nå!';
+                return;
+            }
+
+            countdownEl.classList.remove('started');
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            let countdownText = '⏰ Neste: ';
+            if (days > 0) {
+                countdownText += `${days} dag${days !== 1 ? 'er' : ''} `;
+            }
+            if (hours > 0 || days > 0) {
+                countdownText += `${hours} time${hours !== 1 ? 'r' : ''} `;
+            }
+            countdownText += `${minutes} min`;
+
+            countdownEl.textContent = countdownText;
+        }
+
+        // Scroll to next event
+        document.getElementById('scrollToNext').addEventListener('click', () => {
+            const nextEl = document.querySelector('.current-event, .next-event');
+            if (nextEl) {
+                nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        // Initial update
+        const nextEvent = updateCurrentEvent();
+        
+        // Scroll to next event on page load (after a short delay)
+        setTimeout(() => {
+            if (nextEvent && nextEvent.element) {
+                nextEvent.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 500);
+
+        // Update every minute
+        setInterval(() => {
+            updateCurrentEvent();
+        }, 60000);
+
+        // External chat (Tawk.to)
+        // Replace these two values with your own from Tawk admin.
+        const tawkPropertyId = "SET_PROPERTY_ID";
+        const tawkWidgetId = "SET_WIDGET_ID";
+
+        function loadTawkChat() {
+            const hasConfig =
+                tawkPropertyId &&
+                tawkWidgetId &&
+                tawkPropertyId !== "SET_PROPERTY_ID" &&
+                tawkWidgetId !== "SET_WIDGET_ID";
+
+            if (!hasConfig) {
+                console.info("Tawk chat is disabled: set tawkPropertyId and tawkWidgetId in index.html");
+                return;
+            }
+
+            window.Tawk_API = window.Tawk_API || {};
+            window.Tawk_LoadStart = new Date();
+
+            const script = document.createElement("script");
+            script.async = true;
+            script.src = `https://embed.tawk.to/${tawkPropertyId}/${tawkWidgetId}`;
+            script.charset = "UTF-8";
+            script.setAttribute("crossorigin", "*");
+            document.body.appendChild(script);
+        }
+
+        loadTawkChat();
+    </script>
+</body>
+</html>
