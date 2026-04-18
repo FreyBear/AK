@@ -1,2 +1,1 @@
-# Secrets
-secrets.env
+# secrets.env er trygg å committe – passord hentes fra Codespaces Secrets
