@@ -12,16 +12,54 @@
         }
 
         :root {
-            --primary: #1a4d8f;
-            --secondary: #d4af37;
-            --accent: #c41e3a;
-            --bg: #ffffff;
-            --card-bg: #f8f9fa;
-            --text: #212529;
-            --text-muted: #6c757d;
-            --border: #dee2e6;
-            --current-event: #fff3cd;
-            --next-event: #d1ecf1;
+            --primary: #5e1738;
+            --primary-strong: #8f2f56;
+            --secondary: #f1d8a4;
+            --accent: #1f7a72;
+            --success: #2f8f83;
+            --bg: #fcf8f6;
+            --card-bg: #fffdfb;
+            --text: #2b1f24;
+            --text-muted: #6e5962;
+            --border: #e8d8de;
+            --current-event: #fbe7ee;
+            --next-event: #e3f3f1;
+            --note-bg: rgba(94, 23, 56, 0.06);
+            --current-shadow: rgba(94, 23, 56, 0.22);
+        }
+
+        body.theme-elegant {
+            --primary: #5e1738;
+            --primary-strong: #8f2f56;
+            --secondary: #f1d8a4;
+            --accent: #1f7a72;
+            --success: #2f8f83;
+            --bg: #fcf8f6;
+            --card-bg: #fffdfb;
+            --text: #2b1f24;
+            --text-muted: #6e5962;
+            --border: #e8d8de;
+            --current-event: #fbe7ee;
+            --next-event: #e3f3f1;
+            --note-bg: rgba(94, 23, 56, 0.06);
+            --current-shadow: rgba(94, 23, 56, 0.22);
+        }
+
+        body.theme-energetic {
+            --primary: #6b1d44;
+            --primary-strong: #b53a72;
+            --secondary: #ffd79a;
+            --accent: #0f8a80;
+            --success: #2f9c6c;
+            --bg: #fff8f5;
+            --card-bg: #fffefc;
+            --text: #2e2027;
+            --text-muted: #735a66;
+            --border: #edd8e0;
+            --current-event: #fde6f0;
+            --next-event: #ddf5f3;
+            --note-bg: rgba(107, 29, 68, 0.07);
+            --current-shadow: rgba(107, 29, 68, 0.24);
         }
 
         body {
@@ -33,7 +71,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #2563a8 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-strong) 100%);
             color: white;
             padding: 1.5rem 1rem;
             text-align: center;
@@ -65,7 +103,7 @@
         }
 
         .countdown.started {
-            background: #28a745;
+            background: var(--success);
         }
 
         .container {
@@ -76,7 +114,7 @@
 
         .alert {
             background: var(--secondary);
-            color: #212529;
+            color: var(--text);
             padding: 1rem;
             margin: 1rem 0;
             border-radius: 8px;
@@ -135,7 +173,7 @@
             background: var(--current-event);
             border-left: 4px solid var(--accent);
             transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(196, 30, 58, 0.2);
+            box-shadow: 0 4px 12px var(--current-shadow);
         }
 
         .event.next-event {
@@ -184,7 +222,7 @@
         }
 
         .event-notes {
-            background: rgba(26, 77, 143, 0.05);
+            background: var(--note-bg);
             padding: 0.75rem;
             border-radius: 6px;
             margin-top: 0.75rem;
@@ -242,7 +280,7 @@
         }
 
         .badge.now {
-            background: #28a745;
+            background: var(--success);
             animation: blink 1.5s ease-in-out infinite;
         }
 
@@ -296,6 +334,62 @@
             background: var(--accent);
         }
 
+        .chat-fab {
+            position: fixed;
+            left: 1.25rem;
+            bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            z-index: 999;
+        }
+
+        .chat-fab button {
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        .chat-fab button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-fab button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+        }
+
+        .chat-status {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.35rem 0.65rem;
+        }
+
+        .chat-status.ready {
+            color: var(--success);
+            border-color: rgba(47, 143, 131, 0.45);
+            background: #f2fcfa;
+        }
+
+        .chat-status.error {
+            color: #a33954;
+            border-color: rgba(163, 57, 84, 0.45);
+            background: #fff0f4;
+        }
+
         @media (max-width: 768px) {
             .scroll-indicator {
                 width: 45px;
@@ -303,10 +397,27 @@
                 bottom: 1rem;
                 right: 1rem;
             }
+
+            .chat-fab {
+                left: 1rem;
+                bottom: 1rem;
+                gap: 0.45rem;
+            }
+
+            .chat-fab button {
+                padding: 0.7rem 0.9rem;
+                font-size: 0.9rem;
+            }
+
+            .chat-status {
+                font-size: 0.72rem;
+                padding: 0.3rem 0.55rem;
+            }
+
         }
     </style>
 </head>
-<body>
+<body class="theme-elegant">
     <div class="header">
         <h1>🎵 AK26 Tidsplan</h1>
         <div class="subtitle">Stavanger Studentsangforening</div>
@@ -562,8 +673,8 @@ Syng, drikk og vær glad!</div>
         <div class="day-section" id="day-2026-04-19">
             <div class="day-header">Søndag 19. April 2026</div>
             
-            <div class="event" data-datetime="2026-04-19T10:00">
-                <div class="event-time">⏰ 10:00</div>
+            <div class="event" data-datetime="2026-04-19T12:00">
+                <div class="event-time">⏰ 12:00</div>
                 <div class="event-title">Psildefrokost</div>
                 <div class="event-location">
                     <span><a href="https://www.google.com/maps/search/?api=1&query=Studentersamfundet+Elgeseter+Gate+1+Trondheim+Norway" target="_blank">Studentersamfundet, Elgeseter Gate 1</a></span>
@@ -634,6 +745,10 @@ Vi synger nok Psildesangen før eller under spising. Husk å være i skikkelig d
     </div>
 
     <div class="scroll-indicator" id="scrollToNext" title="Gå til neste hendelse">↓</div>
+    <div class="chat-fab" id="chatFab">
+        <button id="chatToggle" type="button" aria-label="Aapne felleschat i nytt vindu">💬 Felleschat</button>
+        <span class="chat-status ready" id="chatStatus">Aapnes i nytt vindu</span>
+    </div>
 
     <script>
         // Parse all events
@@ -773,35 +888,21 @@ Vi synger nok Psildesangen før eller under spising. Husk å være i skikkelig d
             updateCurrentEvent();
         }, 60000);
 
-        // External chat (Tawk.to)
-        // Replace these two values with your own from Tawk admin.
-        const tawkPropertyId = "SET_PROPERTY_ID";
-        const tawkWidgetId = "SET_WIDGET_ID";
+        const chatToggleBtn = document.getElementById('chatToggle');
+        const chatStatusEl = document.getElementById('chatStatus');
+        const groupChatUrl = 'https://tlk.io/AK-Trondhjem-26';
 
-        function loadTawkChat() {
-            const hasConfig =
-                tawkPropertyId &&
-                tawkWidgetId &&
-                tawkPropertyId !== "SET_PROPERTY_ID" &&
-                tawkWidgetId !== "SET_WIDGET_ID";
-
-            if (!hasConfig) {
-                console.info("Tawk chat is disabled: set tawkPropertyId and tawkWidgetId in index.html");
-                return;
+        chatToggleBtn.addEventListener('click', () => {
+            const newWindow = window.open(groupChatUrl, '_blank', 'noopener,noreferrer');
+            if (!newWindow) {
+                // Fallback if popup/new-tab is blocked by browser settings.
+                window.location.href = groupChatUrl;
             }
+        });
 
-            window.Tawk_API = window.Tawk_API || {};
-            window.Tawk_LoadStart = new Date();
-
-            const script = document.createElement("script");
-            script.async = true;
-            script.src = `https://embed.tawk.to/${tawkPropertyId}/${tawkWidgetId}`;
-            script.charset = "UTF-8";
-            script.setAttribute("crossorigin", "*");
-            document.body.appendChild(script);
-        }
-
-        loadTawkChat();
+        chatStatusEl.textContent = 'Aapnes i nytt vindu';
+        chatStatusEl.classList.remove('error');
+        chatStatusEl.classList.add('ready');
     </script>
 </body>
 </html>
