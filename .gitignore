@@ -1,1 +1,9 @@
-# secrets.env er trygg å committe – passord hentes fra Codespaces Secrets
+# Local secrets and environment overrides
+secrets.env
+secrets.local.env
+.env
+.env.*
+
+# Keep example templates in repo
+!.env.example
+!secrets.example.env

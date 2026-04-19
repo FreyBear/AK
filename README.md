@@ -22,6 +22,16 @@ Prosjektet viser:
 
 - `index.html`: Hele applikasjonen (markup, stil og logikk)
 - `README.md`: Dokumentasjon
+- `secrets.example.env`: Eksempel pa variabler for deploy/drift
+
+## Secrets og sikkerhet
+
+Prosjektet bruker GitHub Codespaces Secrets for ekte passord og nøkler.
+
+- Legg hemmeligheter i `Settings -> Secrets and variables -> Codespaces` i GitHub
+- Bruk lokale override-verdier i `secrets.env` ved behov
+- `secrets.env` er ignorert av git og skal ikke commits
+- `secrets.example.env` kan trygt commits som mal uten hemmeligheter
 
 ## Kjøring lokalt
 
